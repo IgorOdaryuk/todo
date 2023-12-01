@@ -11,10 +11,44 @@ function App() {
     {id: 3, task: "Task 3", status: false},
   ]
 
-  const [task, setTask] = useState(dummyData)
+  const [tasks, setTasks] = useState(dummyData)
   const [addInput, setAddInput] = useState('')
   const [editInput, setEditInput] = useState('')
   const [editId, setEditId] = useState('')
+
+  const addTask = () => {
+    if (!addInput) return window.alert("Field is required");
+
+    let id = Date.now();
+    let newObj = {
+      id: id, 
+      task: addInput,
+      status: false,
+    };
+
+    setTasks((prev) => [...prev, newObj]);
+    setAddInput("");
+  }
+
+  const editField = (id, value) => {
+    setEditId(id);
+    setEditInput(value)
+  }
+
+  const editTask = (id) => {
+    if(!editTask) return window.alert("Field is required");
+
+    let newObj = {
+      id: id,
+      task: editInput,
+      status: false
+    }
+
+    let filteredTask = [...tasks].filter((item) => item.id !== id)
+    let newTasks = [...filteredTask, newObj]
+    setTasks(newTasks)
+    setEditInput('')
+  }
 
   return <div className="App">
   
@@ -22,19 +56,24 @@ function App() {
 
       <div className="inputWrapper">
         <div className="inputContainer">
-          <input type="text" placeholder="Add Task" />
-          <button>Add</button>
+          <input onChange={(e)=> setAddInput(e.target.value)} type="text" placeholder="Add Task" />
+          <button onClick={addTask}>Add</button>
         </div>
 
         <div className="inputContainer">
-        <input type="text" placeholder="Edit Task" />
-        <button>Edit</button>
-        <button>Cancel</button>
+        <input 
+          value={editInput} 
+          onChange={(e) => setEditInput(e.target.value)} 
+          type="text" 
+          placeholder="Edit Task"
+          />
+        <button onClick={() => editTask(editId)}>Edit</button>
+        <button onClick={() => setEditInput("")} className="cancel">Cancel</button>
       </div>
     </div>
         
         <div className="content">
-          {task.map((item) => {
+          {tasks.map((item) => {
             return (
               <div key={item.id} className="listItem">
                 <p>{item.task}</p>
@@ -43,8 +82,10 @@ function App() {
                 <IconButton>
                   <CheckCircle />
                 </IconButton>
-                  <button>Edit</button>
-                  <button>Delete</button>
+                  <IconButton onClick={() => editField(item.id, item.task)}>
+                  <Edit />
+                  </IconButton>
+                  <IconButton><Delete /></IconButton>
                 </div>
               </div>
             )
