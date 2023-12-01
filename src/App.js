@@ -50,6 +50,23 @@ function App() {
     setEditInput('')
   }
 
+  const deleteTask = (id) => {
+    let newTasks = tasks.filter((item) => item.id !== id);
+
+    setTasks(newTasks)
+  }
+
+  const completedTask = (id) => {
+    let newTasks = tasks.map((item) => {
+    if (item.id === id) {
+      return {...item, status: !item.status}
+    }
+    return item
+  })
+
+  setTasks(newTasks)
+  }
+
   return <div className="App">
   
   <div className="projectName">TODO LIST FOR TEST</div>
@@ -73,19 +90,26 @@ function App() {
     </div>
         
         <div className="content">
-          {tasks.map((item) => {
+        {!tasks.length && <div className="noTask">No Task Available for Now</div>}
+          {tasks
+          .sort((a, b) => (a.id < b.id ? 1 : -1))
+          .map((item) => {
             return (
               <div key={item.id} className="listItem">
                 <p>{item.task}</p>
 
                 <div className="actionBtns">
-                <IconButton>
+                <IconButton onClick={() => completedTask(item.id)} color={item.status ? "success" : "null"}>
                   <CheckCircle />
                 </IconButton>
-                  <IconButton onClick={() => editField(item.id, item.task)}>
+                  <IconButton 
+                  сolor="primary"
+                  onClick={() => editField(item.id, item.task)}>
                   <Edit />
                   </IconButton>
-                  <IconButton><Delete /></IconButton>
+                  <IconButton color="error" onClick={() => deleteTask(item.id)}>
+                    <Delete />
+                  </IconButton>
                 </div>
               </div>
             )
